@@ -1,0 +1,14 @@
+{
+global:
+    extern "C++" {
+        unity::gmenuharness::[!i]*;
+        typeinfo?for?unity::gmenuharness::[!i]*;
+        typeinfo?name?for?unity::gmenuharness::[!i]*;
+        vtable?for?unity::gmenuharness::[!i]*;
+        VTT?for?unity::gmenuharness::[!i]*;
+    };
+local:
+    extern "C++" {
+        *;
+    };
+};
