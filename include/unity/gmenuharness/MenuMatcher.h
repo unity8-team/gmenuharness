@@ -25,8 +25,8 @@ do {\
                       GTEST_NONFATAL_FAILURE_) << result.concat_failures().c_str(); \
 } while (0)
 
-#include <MatchResult.h>
-#include <MenuItemMatcher.h>
+#include <unity/gmenuharness/MatchResult.h>
+#include <unity/gmenuharness/MenuItemMatcher.h>
 
 #include <memory>
 #include <vector>

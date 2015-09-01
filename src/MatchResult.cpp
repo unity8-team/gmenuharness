@@ -16,7 +16,7 @@
  * Authored by: Pete Woods <pete.woods@canonical.com>
  */
 
-#include <MatchResult.h>
+#include <unity/gmenuharness/MatchResult.h>
 
 #include <chrono>
 #include <map>

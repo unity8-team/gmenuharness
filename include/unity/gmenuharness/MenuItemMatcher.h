@@ -82,6 +82,10 @@ public:
 
     MenuItemMatcher& pass_through_string_attribute(const std::string& actionName, const std::string& value);
 
+    MenuItemMatcher& pass_through_double_attribute(const std::string& actionName, double value);
+
+    MenuItemMatcher& round_doubles(double maxDifference);
+
     MenuItemMatcher& attribute(const std::string& name, const std::shared_ptr<GVariant>& value);
 
     MenuItemMatcher& boolean_attribute(const std::string& name, bool value);

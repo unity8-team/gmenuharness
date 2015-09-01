@@ -33,6 +33,8 @@ libgmenuharness.so.0.1 libgmenuharness0.1 #MINVER#
  (c++)"unity::gmenuharness::MenuItemMatcher::pass_through_activate(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::shared_ptr<_GVariant> const&)@Base" 0replaceme
  (c++)"unity::gmenuharness::MenuItemMatcher::pass_through_attribute(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::shared_ptr<_GVariant> const&)@Base" 0replaceme
  (c++)"unity::gmenuharness::MenuItemMatcher::pass_through_string_attribute(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme
+ (c++)"unity::gmenuharness::MenuItemMatcher::pass_through_double_attribute(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, double)@Base" 0replaceme
+ (c++)"unity::gmenuharness::MenuItemMatcher::round_doubles(double)@Base" 0replaceme
  (c++)"unity::gmenuharness::MenuItemMatcher::set_pass_through_action_state(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::shared_ptr<_GVariant> const&)@Base" 0replaceme
  (c++)"unity::gmenuharness::MenuItemMatcher::pass_through_boolean_attribute(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool)@Base" 0replaceme
  (c++)"unity::gmenuharness::MenuItemMatcher::icon(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0replaceme

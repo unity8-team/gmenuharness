@@ -16,7 +16,7 @@
  * Authored by: Pete Woods <pete.woods@canonical.com>
  */
 
-#include <MatchUtils.h>
+#include <unity/gmenuharness/MatchUtils.h>
 
 #include <unity/util/ResourcePtr.h>
 

@@ -16,9 +16,9 @@
  * Authored by: Pete Woods <pete.woods@canonical.com>
  */
 
-#include <MatchResult.h>
-#include <MatchUtils.h>
-#include <MenuItemMatcher.h>
+#include <unity/gmenuharness/MatchResult.h>
+#include <unity/gmenuharness/MatchUtils.h>
+#include <unity/gmenuharness/MenuItemMatcher.h>
 
 #include <iostream>
 #include <vector>
@@ -104,6 +104,11 @@ static string type_to_string(MenuItemMatcher::Type type)
 
 struct MenuItemMatcher::Priv
 {
+    Priv()
+    {
+        m_maxDifference = 0.0;
+    }
+
     void all(MatchResult& matchResult, const vector<unsigned int>& location,
         const shared_ptr<GMenuModel>& menu,
         map<string, shared_ptr<GActionGroup>>& actions)
@@ -174,6 +179,8 @@ struct MenuItemMatcher::Priv
     vector<pair<string, shared_ptr<GVariant>>> m_activations;
 
     vector<pair<string, shared_ptr<GVariant>>> m_setActionStates;
+
+    double m_maxDifference;
 };
 
 MenuItemMatcher MenuItemMatcher::checkbox()
@@ -226,6 +233,7 @@ MenuItemMatcher& MenuItemMatcher::operator=(const MenuItemMatcher& other)
     p->m_items = other.p->m_items;
     p->m_activations = other.p->m_activations;
     p->m_setActionStates = other.p->m_setActionStates;
+    p->m_maxDifference = other.p->m_maxDifference;
     return *this;
 }
 
@@ -290,6 +298,20 @@ MenuItemMatcher& MenuItemMatcher::pass_through_string_attribute(const string& ac
             actionName,
             shared_ptr<GVariant>(g_variant_new_string(value.c_str()),
                                  &gvariant_deleter));
+}
+
+MenuItemMatcher& MenuItemMatcher::pass_through_double_attribute(const std::string& actionName, double value)
+{
+    return pass_through_attribute(
+                actionName,
+                shared_ptr<GVariant>(g_variant_new_double(value),
+                                     &gvariant_deleter));
+}
+
+MenuItemMatcher& MenuItemMatcher::round_doubles(double maxDifference)
+{
+    p->m_maxDifference = maxDifference;
+    return *this;
 }
 
 MenuItemMatcher& MenuItemMatcher::attribute(const string& name, const shared_ptr<GVariant>& value)
@@ -588,16 +610,31 @@ void MenuItemMatcher::match(
                 }
                 else if (g_variant_compare(e.second.get(), value.get()))
                 {
-                    gchar* expectedString = g_variant_print(e.second.get(), true);
-                    gchar* actualString = g_variant_print(value.get(), true);
-                    matchResult.failure(
-                            location,
-                            "Expected pass-through attribute '" + e.first
+                    bool reportMismatch = true;
+                    if (g_strcmp0(g_variant_get_type_string(value.get()),"d") == 0 && p->m_maxDifference)
+                    {
+                        auto actualDouble = g_variant_get_double(value.get());
+                        auto expectedDouble = g_variant_get_double(e.second.get());
+                        auto difference = actualDouble-expectedDouble;
+                        if (difference < 0) difference = difference * -1.0;
+                        if (difference <= p->m_maxDifference)
+                        {
+                            reportMismatch = false;
+                        }
+                    }
+                    if (reportMismatch)
+                    {
+                        gchar* expectedString = g_variant_print(e.second.get(), true);
+                        gchar* actualString = g_variant_print(value.get(), true);
+                        matchResult.failure(
+                                location,
+                                "Expected pass-through attribute '" + e.first
                                     + "' == " + expectedString + " but found "
                                     + actualString);
 
-                    g_free(expectedString);
-                    g_free(actualString);
+                        g_free(expectedString);
+                        g_free(actualString);
+                    }
                 }
             }
             else

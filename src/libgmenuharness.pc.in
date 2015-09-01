@@ -17,12 +17,11 @@
 #
 
 prefix=@CMAKE_INSTALL_PREFIX@
-includedir=${prefix}/@GMENU_HARNESS_HDR_INSTALL_DIR@
+includedir=${prefix}/@GMENU_HARNESS_HDR_INSTALL_BASE_DIR@
 libdir=${prefix}/@LIBDIR@
 
 Name: libgmenuharness
 Description: GMenu harness library
-Requires: libglib2.0-dev
 Version: @GMENU_HARNESS_SO_VERSION_MAJOR@.@GMENU_HARNESS_SO_VERSION_MINOR@.@GMENU_HARNESS_SO_VERSION_MICRO@
 Libs: -L${libdir} -l@GMENU_HARNESS@
 Cflags: -I${includedir}

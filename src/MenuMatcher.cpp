@@ -16,8 +16,8 @@
  * Authored by: Pete Woods <pete.woods@canonical.com>
  */
 
-#include <MenuMatcher.h>
-#include <MatchUtils.h>
+#include <unity/gmenuharness/MenuMatcher.h>
+#include <unity/gmenuharness/MatchUtils.h>
 
 #include <iostream>
 
