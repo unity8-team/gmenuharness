@@ -104,11 +104,6 @@ static string type_to_string(MenuItemMatcher::Type type)
 
 struct MenuItemMatcher::Priv
 {
-    Priv()
-    {
-        m_maxDifference = 0.0;
-    }
-
     void all(MatchResult& matchResult, const vector<unsigned int>& location,
         const shared_ptr<GMenuModel>& menu,
         map<string, shared_ptr<GActionGroup>>& actions)
@@ -180,7 +175,7 @@ struct MenuItemMatcher::Priv
 
     vector<pair<string, shared_ptr<GVariant>>> m_setActionStates;
 
-    double m_maxDifference;
+    double m_maxDifference = 0.0;
 };
 
 MenuItemMatcher MenuItemMatcher::checkbox()

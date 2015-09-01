@@ -22,7 +22,6 @@ Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends},
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         libglib2.0-0,
 Description: GMenu harness library
  Library containing GMenu harness
 
