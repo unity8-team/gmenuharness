@@ -163,7 +163,7 @@ struct MenuItemMatcher::Priv
 
         // match the last N items
         size_t j;
-        for (size_t i = count - m_items.size(), j = 0; i < count; ++i, ++j)
+        for (size_t i = count - m_items.size(), j = 0; i < count && j < m_items.size(); ++i, ++j)
         {
             const auto& matcher = m_items.at(j);
             matcher.match(matchResult, location, menu, actions, i);
