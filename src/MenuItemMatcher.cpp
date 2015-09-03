@@ -147,6 +147,29 @@ struct MenuItemMatcher::Priv
         }
     }
 
+    void endsWith(MatchResult& matchResult, const vector<unsigned int>& location,
+               const shared_ptr<GMenuModel>& menu,
+               map<string, shared_ptr<GActionGroup>>& actions)
+    {
+        int count = g_menu_model_get_n_items(menu.get());
+        if (m_items.size() > (unsigned int) count)
+        {
+            matchResult.failure(
+                    location,
+                    "Expected at least " + to_string(m_items.size())
+                            + " children, but found " + to_string(count));
+            return;
+        }
+
+        // match the last N items
+        size_t j;
+        for (size_t i = count - m_items.size(), j = 0; i < count; ++i)
+        {
+            const auto& matcher = m_items.at(j);
+            matcher.match(matchResult, location, menu, actions, i);
+        }
+    }
+
     Type m_type = Type::plain;
 
     Mode m_mode = Mode::all;
@@ -757,6 +780,9 @@ void MenuItemMatcher::match(
                             break;
                         case Mode::starts_with:
                             p->startsWith(childMatchResult, location, link, actions);
+                            break;
+                        case Mode::ends_with:
+                            p->endsWith(childMatchResult, location, link, actions);
                             break;
                     }
                 }

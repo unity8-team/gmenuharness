@@ -38,7 +38,8 @@ public:
     enum class Mode
     {
         all,
-        starts_with
+        starts_with,
+        ends_with
     };
 
     enum class Type
