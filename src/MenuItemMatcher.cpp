@@ -534,36 +534,36 @@ void MenuItemMatcher::match(
     map<string, vector<string>>::iterator iter;
     for (iter = p->m_themed_icons.begin(); iter != p->m_themed_icons.end(); ++iter)
     {
-        auto icon_val = g_menu_item_get_attribute_value(menuItem.get(), (*iter).first.c_str(), nullptr);
+        auto icon_val = g_menu_item_get_attribute_value(menuItem.get(), iter->first.c_str(), nullptr);
         if (!icon_val)
         {
             matchResult.failure(
                             location,
-                            "Expected themed icon " + (*iter).first + " was not found");
+                            "Expected themed icon " + iter->first + " was not found");
         }
 
-        auto gicon = g_icon_deserialize(icon_val);
-        if (!gicon || !G_IS_THEMED_ICON(gicon))
+        auto gicon = shared_ptr<GIcon>(g_icon_deserialize(icon_val), &g_object_deleter);
+        if (!gicon.get() || !G_IS_THEMED_ICON(gicon.get()))
         {
             matchResult.failure(
                            location,
-                           "Expected attribute " + (*iter).first + " is not a themed icon");
+                           "Expected attribute " + iter->first + " is not a themed icon");
         }
         else
         {
-            auto iconNames = g_themed_icon_get_names(G_THEMED_ICON(gicon));
+            auto iconNames = g_themed_icon_get_names(G_THEMED_ICON(gicon.get()));
             int nb_icons = 0;
             while(iconNames[nb_icons])
             {
                 ++nb_icons;
             }
 
-            if (nb_icons != (*iter).second.size())
+            if (nb_icons != iter->second.size())
             {
                 matchResult.failure(
                            location,
-                           "Expected " + to_string((*iter).second.size()) +
-                           " icons for themed icon [" + (*iter).first +
+                           "Expected " + to_string(iter->second.size()) +
+                           " icons for themed icon [" + iter->first +
                            "], but " + to_string(nb_icons) + " were found.");
             }
             else
@@ -571,18 +571,17 @@ void MenuItemMatcher::match(
                 // now compare all the icons
                 for (int i = 0; i < nb_icons; ++i)
                 {
-                    if ((*iter).second[i] != iconNames[i])
+                    if (iter->second[i] != iconNames[i])
                     {
                         matchResult.failure(
                                    location,
                                    "Icon at position " + to_string(i) +
-                                   " for themed icon [" + (*iter).first +
-                                   "], mismatchs. Expected: " + iconNames[i] + " but found " + (*iter).second[i]);
+                                   " for themed icon [" + iter->first +
+                                   "], mismatchs. Expected: " + iconNames[i] + " but found " + iter->second[i]);
                     }
                 }
             }
         }
-        g_object_unref(gicon);
     }
 
     string label = get_string_attribute(menuItem, G_MENU_ATTRIBUTE_LABEL);
