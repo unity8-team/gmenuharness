@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -182,11 +183,15 @@ struct MenuItemMatcher::Priv
 
     shared_ptr<string> m_icon;
 
+    map<string, vector<std::string>> m_themed_icons;
+
     shared_ptr<string> m_action;
 
     vector<std::string> m_state_icons;
 
     vector<pair<string, shared_ptr<GVariant>>> m_attributes;
+
+    vector<string> m_not_exist_attributes;
 
     vector<pair<string, shared_ptr<GVariant>>> m_pass_through_attributes;
 
@@ -242,9 +247,11 @@ MenuItemMatcher& MenuItemMatcher::operator=(const MenuItemMatcher& other)
     p->m_expectedSize = other.p->m_expectedSize;
     p->m_label = other.p->m_label;
     p->m_icon = other.p->m_icon;
+    p->m_themed_icons = other.p->m_themed_icons;
     p->m_action = other.p->m_action;
     p->m_state_icons = other.p->m_state_icons;
     p->m_attributes = other.p->m_attributes;
+    p->m_not_exist_attributes = other.p->m_not_exist_attributes;
     p->m_pass_through_attributes = other.p->m_pass_through_attributes;
     p->m_isToggled = other.p->m_isToggled;
     p->m_linkType = other.p->m_linkType;
@@ -288,6 +295,12 @@ MenuItemMatcher& MenuItemMatcher::state_icons(const std::vector<std::string>& st
 MenuItemMatcher& MenuItemMatcher::icon(const string& icon)
 {
     p->m_icon = make_shared<string>(icon);
+    return *this;
+}
+
+MenuItemMatcher& MenuItemMatcher::themed_icon(const std::string& iconName, const std::vector<std::string>& icons)
+{
+    p->m_themed_icons[iconName] = icons;
     return *this;
 }
 
@@ -354,15 +367,39 @@ MenuItemMatcher& MenuItemMatcher::string_attribute(const string& name, const str
                                  &gvariant_deleter));
 }
 
-MenuItemMatcher& MenuItemMatcher::toggled(bool isToggled)
+MenuItemMatcher& MenuItemMatcher::int32_attribute(const std::string& name, int value)
 {
-    p->m_isToggled = make_shared<bool>(isToggled);
+    return attribute(
+            name,
+            shared_ptr<GVariant>(g_variant_new_int32 (value),
+                                 &gvariant_deleter));
+}
+
+MenuItemMatcher& MenuItemMatcher::int64_attribute(const std::string& name, int value)
+{
+    return attribute(
+            name,
+            shared_ptr<GVariant>(g_variant_new_int64 (value),
+                                 &gvariant_deleter));
+}
+
+MenuItemMatcher& MenuItemMatcher::double_attribute(const std::string& name, double value)
+{
+    return attribute(
+            name,
+            shared_ptr<GVariant>(g_variant_new_double (value),
+                                 &gvariant_deleter));
+}
+
+MenuItemMatcher& MenuItemMatcher::attribute_not_set(const std::string& name)
+{
+    p->m_not_exist_attributes.emplace_back (name);
     return *this;
 }
 
-MenuItemMatcher& MenuItemMatcher::mode(Mode mode)
+MenuItemMatcher& MenuItemMatcher::toggled(bool isToggled)
 {
-    p->m_mode = mode;
+    p->m_isToggled = make_shared<bool>(isToggled);
     return *this;
 }
 
@@ -425,12 +462,18 @@ MenuItemMatcher& MenuItemMatcher::set_action_state(const std::shared_ptr<GVarian
     return *this;
 }
 
+MenuItemMatcher& MenuItemMatcher::mode(Mode mode)
+{
+    p->m_mode = mode;
+    return *this;
+}
+
 void MenuItemMatcher::match(
         MatchResult& matchResult,
        const vector<unsigned int>& parentLocation,
        const shared_ptr<GMenuModel>& menu,
        map<string, shared_ptr<GActionGroup>>& actions,
-       int index) const
+       unsigned int index) const
 {
     shared_ptr<GMenuItem> menuItem(g_menu_item_new_from_model(menu.get(), index), &g_object_deleter);
 
@@ -487,6 +530,61 @@ void MenuItemMatcher::match(
                         + type_to_string(actualType));
     }
 
+    // check themed icons
+    map<string, vector<string>>::iterator iter;
+    for (iter = p->m_themed_icons.begin(); iter != p->m_themed_icons.end(); ++iter)
+    {
+        auto icon_val = g_menu_item_get_attribute_value(menuItem.get(), (*iter).first.c_str(), nullptr);
+        if (!icon_val)
+        {
+            matchResult.failure(
+                            location,
+                            "Expected themed icon " + (*iter).first + " was not found");
+        }
+
+        auto gicon = g_icon_deserialize(icon_val);
+        if (!gicon || !G_IS_THEMED_ICON(gicon))
+        {
+            matchResult.failure(
+                           location,
+                           "Expected attribute " + (*iter).first + " is not a themed icon");
+        }
+        else
+        {
+            auto iconNames = g_themed_icon_get_names(G_THEMED_ICON(gicon));
+            int nb_icons = 0;
+            while(iconNames[nb_icons])
+            {
+                ++nb_icons;
+            }
+
+            if (nb_icons != (*iter).second.size())
+            {
+                matchResult.failure(
+                           location,
+                           "Expected " + to_string((*iter).second.size()) +
+                           " icons for themed icon [" + (*iter).first +
+                           "], but " + to_string(nb_icons) + " were found.");
+            }
+            else
+            {
+                // now compare all the icons
+                for (int i = 0; i < nb_icons; ++i)
+                {
+                    if ((*iter).second[i] != iconNames[i])
+                    {
+                        matchResult.failure(
+                                   location,
+                                   "Icon at position " + to_string(i) +
+                                   " for themed icon [" + (*iter).first +
+                                   "], mismatchs. Expected: " + iconNames[i] + " but found " + (*iter).second[i]);
+                    }
+                }
+            }
+        }
+        g_object_unref(gicon);
+    }
+
     string label = get_string_attribute(menuItem, G_MENU_ATTRIBUTE_LABEL);
     if (p->m_label && (*p->m_label) != label)
     {
@@ -539,13 +637,13 @@ void MenuItemMatcher::match(
         {
             if (std::string(key) == "icon") {
                 auto gicon = g_icon_deserialize(value);
-                if (gicon && G_IS_THEMED_ICON(gicon))
+                if (G_IS_THEMED_ICON(gicon))
                 {
                     auto iconNames = g_themed_icon_get_names(G_THEMED_ICON(gicon));
                     // Just take the first icon in the list (there is only ever one)
                     actual_state_icons.push_back(iconNames[0]);
-                    g_object_unref(gicon);
                 }
+                g_object_unref(gicon);
             }
             else if (std::string(key) == "icons" && g_variant_is_of_type(value, G_VARIANT_TYPE("av")))
             {
@@ -559,13 +657,13 @@ void MenuItemMatcher::match(
                 while (g_variant_iter_loop(&icon_it, "v", &icon_value))
                 {
                     auto gicon = g_icon_deserialize(icon_value);
-                    if (gicon && G_IS_THEMED_ICON(gicon))
+                    if (G_IS_THEMED_ICON(gicon))
                     {
                         auto iconNames = g_themed_icon_get_names(G_THEMED_ICON(gicon));
                         // Just take the first icon in the list (there is only ever one)
                         actual_state_icons.push_back(iconNames[0]);
-                        g_object_unref(gicon);
                     }
+                    g_object_unref(gicon);
                 }
                 // We're breaking out of g_variant_iter_loop here so clean up
                 g_variant_unref(value);
@@ -629,7 +727,7 @@ void MenuItemMatcher::match(
                 else if (g_variant_compare(e.second.get(), value.get()))
                 {
                     bool reportMismatch = true;
-                    if (g_strcmp0(g_variant_get_type_string(value.get()),"d") == 0 && p->m_maxDifference)
+                    if (g_strcmp0(g_variant_get_type_string(value.get()),"d") == 0 && p->m_maxDifference != 0.0)
                     {
                         auto actualDouble = g_variant_get_double(value.get());
                         auto expectedDouble = g_variant_get_double(e.second.get());
@@ -690,6 +788,17 @@ void MenuItemMatcher::match(
                             + ", but found " + actualString);
             g_free(expectedString);
             g_free(actualString);
+        }
+    }
+
+    for (const auto& e: p->m_not_exist_attributes)
+    {
+        auto value = get_attribute(menuItem, e.c_str());
+        if (value)
+        {
+            matchResult.failure(location,
+                    "Not expected attribute '" + e
+                            + "' was found");
         }
     }
 

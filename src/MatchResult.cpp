@@ -37,7 +37,7 @@ namespace
 
 static void printLocation(ostream& ss, const vector<unsigned int>& location, bool first)
 {
-    for (int i : location)
+    for (auto i : location)
     {
         ss << " ";
         if (first)
