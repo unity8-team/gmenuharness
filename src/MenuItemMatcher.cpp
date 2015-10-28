@@ -191,6 +191,8 @@ struct MenuItemMatcher::Priv
 
     vector<pair<string, shared_ptr<GVariant>>> m_attributes;
 
+    vector<string> m_not_exist_attributes;
+
     vector<pair<string, shared_ptr<GVariant>>> m_pass_through_attributes;
 
     shared_ptr<bool> m_isToggled;
@@ -249,6 +251,7 @@ MenuItemMatcher& MenuItemMatcher::operator=(const MenuItemMatcher& other)
     p->m_action = other.p->m_action;
     p->m_state_icons = other.p->m_state_icons;
     p->m_attributes = other.p->m_attributes;
+    p->m_not_exist_attributes = other.p->m_not_exist_attributes;
     p->m_pass_through_attributes = other.p->m_pass_through_attributes;
     p->m_isToggled = other.p->m_isToggled;
     p->m_linkType = other.p->m_linkType;
@@ -364,15 +367,15 @@ MenuItemMatcher& MenuItemMatcher::string_attribute(const string& name, const str
                                  &gvariant_deleter));
 }
 
-MenuItemMatcher& MenuItemMatcher::toggled(bool isToggled)
+MenuItemMatcher& MenuItemMatcher::attribute_not_set(const std::string& name)
 {
-    p->m_isToggled = make_shared<bool>(isToggled);
+    p->m_not_exist_attributes.emplace_back (name);
     return *this;
 }
 
-MenuItemMatcher& MenuItemMatcher::mode(Mode mode)
+MenuItemMatcher& MenuItemMatcher::toggled(bool isToggled)
 {
-    p->m_mode = mode;
+    p->m_isToggled = make_shared<bool>(isToggled);
     return *this;
 }
 
@@ -432,6 +435,12 @@ MenuItemMatcher& MenuItemMatcher::set_pass_through_action_state(const std::strin
 MenuItemMatcher& MenuItemMatcher::set_action_state(const std::shared_ptr<GVariant>& state)
 {
     p->m_setActionStates.emplace_back("", state);
+    return *this;
+}
+
+MenuItemMatcher& MenuItemMatcher::mode(Mode mode)
+{
+    p->m_mode = mode;
     return *this;
 }
 
@@ -755,6 +764,17 @@ void MenuItemMatcher::match(
                             + ", but found " + actualString);
             g_free(expectedString);
             g_free(actualString);
+        }
+    }
+
+    for (const auto& e: p->m_not_exist_attributes)
+    {
+        auto value = get_attribute(menuItem, e.c_str());
+        if (value)
+        {
+            matchResult.failure(location,
+                    "Not expected attribute '" + e
+                            + "' was found");
         }
     }
 
