@@ -95,6 +95,12 @@ public:
 
     MenuItemMatcher& string_attribute(const std::string& name, const std::string& value);
 
+    MenuItemMatcher& int32_attribute(const std::string& name, int value);
+
+    MenuItemMatcher& int64_attribute(const std::string& name, int value);
+
+    MenuItemMatcher& double_attribute(const std::string& name, double value);
+
     MenuItemMatcher& attribute_not_set(const std::string& name);
 
     MenuItemMatcher& toggled(bool toggled);

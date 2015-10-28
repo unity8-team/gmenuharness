@@ -367,6 +367,30 @@ MenuItemMatcher& MenuItemMatcher::string_attribute(const string& name, const str
                                  &gvariant_deleter));
 }
 
+MenuItemMatcher& MenuItemMatcher::int32_attribute(const std::string& name, int value)
+{
+    return attribute(
+            name,
+            shared_ptr<GVariant>(g_variant_new_int32 (value),
+                                 &gvariant_deleter));
+}
+
+MenuItemMatcher& MenuItemMatcher::int64_attribute(const std::string& name, int value)
+{
+    return attribute(
+            name,
+            shared_ptr<GVariant>(g_variant_new_int64 (value),
+                                 &gvariant_deleter));
+}
+
+MenuItemMatcher& MenuItemMatcher::double_attribute(const std::string& name, double value)
+{
+    return attribute(
+            name,
+            shared_ptr<GVariant>(g_variant_new_double (value),
+                                 &gvariant_deleter));
+}
+
 MenuItemMatcher& MenuItemMatcher::attribute_not_set(const std::string& name)
 {
     p->m_not_exist_attributes.emplace_back (name);
