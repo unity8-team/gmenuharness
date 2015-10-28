@@ -9,12 +9,12 @@ Build-Depends: cmake,
                libglib2.0-dev,
                libunity-api-dev,
                pkg-config,
-Standards-Version: 3.9.3
+Standards-Version: 3.9.6
 Homepage: https://launchpad.net/gmenuharness
 # if you don't have have commit access to this branch but would like to upload
 # directly to Ubuntu, don't worry: your changes will be merged back into the
 # upstream branch
-Vcs-Bzr: gmenuharness
+Vcs-Bzr: https://code.launchpad.net/~indicator-applet-developers/gmenuharness/trunk
 
 Package: libgmenuharness0.1
 Architecture: any
