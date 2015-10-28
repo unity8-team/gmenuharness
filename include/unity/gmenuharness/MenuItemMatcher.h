@@ -75,6 +75,8 @@ public:
 
     MenuItemMatcher& icon(const std::string& icon);
 
+    MenuItemMatcher& themed_icon(const std::string& iconName, const std::vector<std::string>& icons);
+
     MenuItemMatcher& widget(const std::string& widget);
 
     MenuItemMatcher& pass_through_attribute(const std::string& actionName, const std::shared_ptr<GVariant>& value);
