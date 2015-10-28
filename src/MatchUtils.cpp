@@ -66,10 +66,7 @@ void g_object_deleter(gpointer object)
 
 void gvariant_deleter(GVariant* varptr)
 {
-    if (varptr != nullptr)
-    {
-        g_variant_unref(varptr);
-    }
+    g_clear_pointer(&varptr, g_variant_unref);
 }
 
 }   // namespace gmenuharness

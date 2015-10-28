@@ -473,7 +473,7 @@ void MenuItemMatcher::match(
        const vector<unsigned int>& parentLocation,
        const shared_ptr<GMenuModel>& menu,
        map<string, shared_ptr<GActionGroup>>& actions,
-       int index) const
+       unsigned int index) const
 {
     shared_ptr<GMenuItem> menuItem(g_menu_item_new_from_model(menu.get(), index), &g_object_deleter);
 
@@ -727,7 +727,7 @@ void MenuItemMatcher::match(
                 else if (g_variant_compare(e.second.get(), value.get()))
                 {
                     bool reportMismatch = true;
-                    if (g_strcmp0(g_variant_get_type_string(value.get()),"d") == 0 && p->m_maxDifference)
+                    if (g_strcmp0(g_variant_get_type_string(value.get()),"d") == 0 && p->m_maxDifference != 0.0)
                     {
                         auto actualDouble = g_variant_get_double(value.get());
                         auto expectedDouble = g_variant_get_double(e.second.get());
