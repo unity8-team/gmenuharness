@@ -420,7 +420,7 @@ MenuItemMatcher& MenuItemMatcher::is_empty()
     return has_exactly(0);
 }
 
-MenuItemMatcher& MenuItemMatcher::has_exactly(size_t children)
+MenuItemMatcher& MenuItemMatcher::has_exactly(unsigned int children)
 {
     p->m_expectedSize = make_shared<size_t>(children);
     return *this;

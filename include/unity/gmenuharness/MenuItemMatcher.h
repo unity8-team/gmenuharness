@@ -113,7 +113,7 @@ public:
 
     MenuItemMatcher& is_empty();
 
-    MenuItemMatcher& has_exactly(std::size_t children);
+    MenuItemMatcher& has_exactly(unsigned int children);
 
     MenuItemMatcher& item(const MenuItemMatcher& item);
 
