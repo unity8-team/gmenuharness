@@ -8,6 +8,7 @@ Build-Depends: cmake,
                debhelper (>= 9.0.0),
                libglib2.0-dev,
                libunity-api-dev,
+               lsb-release,
                pkg-config,
 Standards-Version: 3.9.6
 Homepage: https://launchpad.net/gmenuharness

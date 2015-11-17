@@ -6,3 +6,6 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 %:
 	dh $@ --parallel --fail-missing
 
+override_dh_auto_clean:
+	/bin/bash $(CURDIR)/debian/gen-debian-files.sh $(CURDIR)/debian
+	dh_auto_clean
