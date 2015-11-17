@@ -1,0 +1,3 @@
+usr/lib/*/libgmenuharness.so
+usr/include/gmenuharness-0.1/unity/gmenuharness/*.h
+usr/lib/*/pkgconfig/libgmenuharness.pc
