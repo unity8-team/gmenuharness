@@ -1,4 +1,4 @@
-libgmenuharness.so.0.1 libgmenuharness0.1 #MINVER#
+libgmenuharness.so.@GMENU_HARNESS_SO_VERSION@ libgmenuharness@GMENU_HARNESS_SO_VERSION@ #MINVER#
  (c++)"unity::gmenuharness::g_object_deleter(void*)@Base" 0replaceme
  (c++)"unity::gmenuharness::gvariant_deleter(_GVariant*)@Base" 0replaceme
  (c++)"unity::gmenuharness::MatchResult::concat_failures() const@Base" 0replaceme
