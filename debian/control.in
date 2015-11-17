@@ -6,6 +6,7 @@ XSBC-Original-Maintainer: Pete Woods <pete.woods@canonical.com>
 Build-Depends: cmake,
                cmake-extras (>= 0.4),
                debhelper (>= 9.0.0),
+               lsb_release,
                libglib2.0-dev,
                libunity-api-dev,
                pkg-config,
