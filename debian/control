@@ -1,4 +1,4 @@
-Source: libgmenuharness
+Source: gmenuharness
 Section: gnome
 Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
