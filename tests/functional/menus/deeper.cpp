@@ -43,21 +43,54 @@ createMenu()
             {
                 {
                     shared_ptr<GMenuItem> item(g_menu_item_new("Apple", "app.new-apple"), &g_object_deleter);
+                    g_menu_item_set_attribute_value(
+                            item.get(), "x-foo-pass-through-action",
+                            g_variant_new_string("app.pass-through-action-string"));
                     g_menu_append_item(newMenu.get(), item.get());
                     g_action_map_add_action(G_ACTION_MAP(ag.get()),
                                 G_ACTION(g_simple_action_new("new-apple", NULL)));
+
+                    shared_ptr<GSimpleAction> passThroughAction(
+                            g_simple_action_new_stateful(
+                                    "pass-through-action-string", NULL,
+                                    g_variant_new_string("string-value-passthrough")),
+                            &g_object_deleter);
+                    g_action_map_add_action(G_ACTION_MAP(ag.get()),
+                                            G_ACTION(passThroughAction.get()));
                 }
                 {
                     shared_ptr<GMenuItem> item(g_menu_item_new("Banana", "app.new-banana"), &g_object_deleter);
+                    g_menu_item_set_attribute_value(
+                            item.get(), "x-foo-pass-through-action",
+                            g_variant_new_string("app.pass-through-action-bool"));
                     g_menu_append_item(newMenu.get(), item.get());
                     g_action_map_add_action(G_ACTION_MAP(ag.get()),
                                 G_ACTION(g_simple_action_new("new-banana", NULL)));
+
+                    shared_ptr<GSimpleAction> passThroughAction(
+                                        g_simple_action_new_stateful(
+                                                "pass-through-action-bool", NULL,
+                                                g_variant_new_boolean(TRUE)),
+                                        &g_object_deleter);
+                    g_action_map_add_action(G_ACTION_MAP(ag.get()),
+                                            G_ACTION(passThroughAction.get()));
                 }
                 {
                     shared_ptr<GMenuItem> item(g_menu_item_new("Coconut", "app.new-coconut"), &g_object_deleter);
+                    g_menu_item_set_attribute_value(
+                            item.get(), "x-foo-pass-through-action",
+                            g_variant_new_string("app.pass-through-action-double"));
                     g_menu_append_item(newMenu.get(), item.get());
                     g_action_map_add_action(G_ACTION_MAP(ag.get()),
                                 G_ACTION(g_simple_action_new("new-coconut", NULL)));
+
+                    shared_ptr<GSimpleAction> passThroughAction(
+                                        g_simple_action_new_stateful(
+                                                "pass-through-action-double", NULL,
+                                                g_variant_new_double(3.14)),
+                                        &g_object_deleter);
+                    g_action_map_add_action(G_ACTION_MAP(ag.get()),
+                                            G_ACTION(passThroughAction.get()));
                 }
 
                 shared_ptr<GMenuItem> item(g_menu_item_new_submenu("New", G_MENU_MODEL(newMenu.get())), &g_object_deleter);
