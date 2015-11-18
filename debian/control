@@ -5,8 +5,13 @@ Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 XSBC-Original-Maintainer: Pete Woods <pete.woods@canonical.com>
 Build-Depends: cmake,
                cmake-extras (>= 0.4),
+               dbus,
                debhelper (>= 9.0.0),
+               qt5-default,
+               qtbase5-dev,
                libglib2.0-dev,
+               libgtest-dev,
+               libqtdbustest1-dev (>= 0.2),
                libunity-api-dev,
                lsb-release,
                pkg-config,
