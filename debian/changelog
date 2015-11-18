@@ -1,6 +1,44 @@
-gmenuharness (0.1ubuntu1) UNRELEASED; urgency=medium
+gmenuharness (0.1+16.04.20151118-0ubuntu1) xenial; urgency=medium
 
   [ Xavi Garcia ]
   * Initial release.
+  * Added copyright and COPYING files added: COPYING debian/copyright
+  * updated control file. inttool removed as build dependency and
+    updated XSBC-Original-Maintainer
 
- -- Xavi Garcia <xavi.garcia.mena@canonical.com>  Fri, 13 Nov 2015 13:17:33 +0100
+  [ CI Train Bot ]
+  * debian/libgmenuharness0.1.vivid.symbols: update to released version.
+  * debian/libgmenuharness0.1.xenial.symbols: update to released
+    version.
+
+  [ Pete Woods ]
+  * Clean up symbols file (missing symbols, dedupe)
+  * Distro-specific symbols files added: debian/gen-debian-files.sh
+    debian/libgmenuharness0.1.xenial.symbols renamed:
+    debian/libgmenuharness0.1.symbols =>
+    debian/libgmenuharness0.1.vivid.symbols
+  * Empty commit for initial landing
+  * Fix warnings in debian/control
+  * shared_ptr<Ftw>
+
+  [ Xavi Garcia Mena ]
+  * Added INSTALL, README, TODO files added: INSTALL README TODO
+  * Added ends_with mode
+  * Added limit check for j index at endsWith
+  * Fix issue with index not being incremented
+  * Suggested changes
+  * Sync with bugfixes & features in Xavi's lp:~xavi-garcia-
+    mena/indicator-sound/bluetooth-usb-hdmi-labels-with-tests branch
+  * Updated copyright year
+  * Updated include paths, added double methods added: include/unity/
+    include/unity/CMakeLists.txt include/unity/gmenuharness/
+    include/unity/gmenuharness/CMakeLists.txt renamed:
+    include/MatchResult.h => include/unity/gmenuharness/MatchResult.h
+    include/MatchUtils.h => include/unity/gmenuharness/MatchUtils.h
+    include/MenuItemMatcher.h =>
+    include/unity/gmenuharness/MenuItemMatcher.h include/MenuMatcher.h
+    => include/unity/gmenuharness/MenuMatcher.h
+  * adding extra new line
+  * copyright updated to be LGPL
+
+ -- Pete Woods <ci-train-bot@canonical.com>  Wed, 18 Nov 2015 09:21:52 +0000
