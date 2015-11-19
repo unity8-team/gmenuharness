@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
+export QT_SELECT := qt5
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 
 %:
