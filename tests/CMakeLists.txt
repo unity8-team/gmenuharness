@@ -23,3 +23,21 @@ include_directories(
 
 add_subdirectory(functional)
 add_subdirectory(utils)
+
+add_definitions(
+    -DMENU_DIR="${CMAKE_CURRENT_BINARY_DIR}/functional/menus"
+)
+
+add_executable(
+    tests
+    functional/FunctionalTests.cpp
+    unit/TestMatchResult.cpp
+)
+
+target_link_libraries(
+    tests
+    test-main
+    ${GMENU_HARNESS}
+    ${TEST_DEPENDENCIES_LDFLAGS}
+    Qt5::DBus
+)
