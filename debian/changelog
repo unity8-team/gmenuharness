@@ -1,3 +1,9 @@
+gmenuharness (0.1+16.04.20151119.3-0ubuntu1) xenial; urgency=medium
+
+  * Add a very basic level of functional testing
+
+ -- Pete Woods <ci-train-bot@canonical.com>  Thu, 19 Nov 2015 11:12:21 +0000
+
 gmenuharness (0.1+16.04.20151118-0ubuntu1) xenial; urgency=medium
 
   [ Xavi Garcia ]
