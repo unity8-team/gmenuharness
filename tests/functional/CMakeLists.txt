@@ -6,7 +6,7 @@ add_definitions(
 
 add_executable(
     functional-tests
-    functional-tests.cpp
+    FunctionalTests.cpp
 )
 
 target_link_libraries(

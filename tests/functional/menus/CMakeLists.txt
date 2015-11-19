@@ -1,7 +1,7 @@
 
 add_library(
     menu-main SHARED
-    menu-main.cpp
+    MenuMain.cpp
 )
 
 target_link_libraries(
@@ -21,5 +21,5 @@ function(add_menu NAME)
     )
 endfunction()
 
-add_menu(simple)
-add_menu(deeper)
+add_menu(Simple)
+add_menu(Deeper)

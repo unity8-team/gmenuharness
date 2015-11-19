@@ -1,7 +1,7 @@
 
 add_library(
-    test-main
-    test-main.cpp
+    test-main STATIC
+    TestMain.cpp
 )
 
 target_link_libraries(

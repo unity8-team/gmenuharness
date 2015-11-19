@@ -70,7 +70,7 @@ protected:
 
 TEST_F(FunctionalTests, ImportSimple)
 {
-    addMenu("simple");
+    addMenu("Simple");
     ASSERT_NO_THROW(start());
 
     EXPECT_MATCHRESULT(mh::MenuMatcher(parameters())
@@ -95,7 +95,7 @@ TEST_F(FunctionalTests, ImportSimple)
 
 TEST_F(FunctionalTests, ImportDeeperMatchAll)
 {
-    addMenu("deeper");
+    addMenu("Deeper");
     ASSERT_NO_THROW(start());
 
     EXPECT_MATCHRESULT(mh::MenuMatcher(parameters())
