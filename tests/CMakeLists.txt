@@ -41,3 +41,9 @@ target_link_libraries(
     ${TEST_DEPENDENCIES_LDFLAGS}
     Qt5::DBus
 )
+
+add_test(
+    tests
+    tests
+)
+
