@@ -105,6 +105,8 @@ public:
 
     MenuItemMatcher& toggled(bool toggled);
 
+    MenuItemMatcher& enabled(bool enabled);
+
     MenuItemMatcher& mode(Mode mode);
 
     MenuItemMatcher& submenu();

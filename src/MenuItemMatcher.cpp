@@ -197,6 +197,8 @@ struct MenuItemMatcher::Priv
 
     shared_ptr<bool> m_isToggled;
 
+    shared_ptr<bool> m_isEnabled;
+
     vector<MenuItemMatcher> m_items;
 
     vector<pair<string, shared_ptr<GVariant>>> m_activations;
@@ -254,6 +256,7 @@ MenuItemMatcher& MenuItemMatcher::operator=(const MenuItemMatcher& other)
     p->m_not_exist_attributes = other.p->m_not_exist_attributes;
     p->m_pass_through_attributes = other.p->m_pass_through_attributes;
     p->m_isToggled = other.p->m_isToggled;
+    p->m_isEnabled = other.p->m_isEnabled;
     p->m_linkType = other.p->m_linkType;
     p->m_items = other.p->m_items;
     p->m_activations = other.p->m_activations;
@@ -403,6 +406,12 @@ MenuItemMatcher& MenuItemMatcher::toggled(bool isToggled)
     return *this;
 }
 
+MenuItemMatcher& MenuItemMatcher::enabled(bool isEnabled)
+{
+    p->m_isEnabled = make_shared<bool>(isEnabled);
+    return *this;
+}
+
 MenuItemMatcher& MenuItemMatcher::submenu()
 {
     p->m_linkType = LinkType::submenu;
@@ -485,6 +494,7 @@ void MenuItemMatcher::match(
     bool isCheckbox = false;
     bool isRadio = false;
     bool isToggled = false;
+    bool isEnabled = true;
 
     pair<string, string> idPair;
     shared_ptr<GActionGroup> actionGroup;
@@ -510,6 +520,9 @@ void MenuItemMatcher::match(
             isToggled = g_variant_get_boolean(state.get());
             isCheckbox = true;
         }
+
+        isEnabled = g_action_group_get_action_enabled(actionGroup.get(),
+                                                      idPair.second.c_str()) == TRUE;
     }
 
     Type actualType = Type::plain;
@@ -807,6 +820,14 @@ void MenuItemMatcher::match(
                 location,
                 "Expected toggled = " + bool_to_string(*p->m_isToggled)
                         + ", but found " + bool_to_string(isToggled));
+    }
+
+    if (p->m_isEnabled && (*p->m_isEnabled) != isEnabled)
+    {
+        matchResult.failure(
+                location,
+                "Expected enabled = " + bool_to_string(*p->m_isEnabled)
+                        + ", but found " + bool_to_string(isEnabled));
     }
 
     if (!matchResult.success())
