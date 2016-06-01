@@ -106,8 +106,9 @@ createMenu()
         {
             shared_ptr<GMenuItem> item(g_menu_item_new("Save", "app.save"), &g_object_deleter);
             g_menu_append_item(fileMenu.get(), item.get());
-            g_action_map_add_action(G_ACTION_MAP(ag.get()),
-                        G_ACTION(g_simple_action_new("save", NULL)));
+            GSimpleAction *action = G_SIMPLE_ACTION(g_simple_action_new("save", NULL));
+            g_simple_action_set_enabled(action, FALSE);
+            g_action_map_add_action(G_ACTION_MAP(ag.get()), G_ACTION(action));
         }
         {
             shared_ptr<GMenuItem> item(g_menu_item_new("Quit", "app.quit"), &g_object_deleter);
