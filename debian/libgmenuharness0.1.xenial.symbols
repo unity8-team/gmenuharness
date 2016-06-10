@@ -19,7 +19,7 @@ libgmenuharness.so.0.1 libgmenuharness0.1 #MINVER#
  (c++)"unity::gmenuharness::MenuItemMatcher::boolean_attribute(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool)@Base" 0.1+16.04.20151118
  (c++)"unity::gmenuharness::MenuItemMatcher::checkbox()@Base" 0.1+16.04.20151118
  (c++)"unity::gmenuharness::MenuItemMatcher::double_attribute(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, double)@Base" 0.1+16.04.20151118
- (c++)"unity::gmenuharness::MenuItemMatcher::enabled(bool)@Base" 0replaceme
+ (c++)"unity::gmenuharness::MenuItemMatcher::enabled(bool)@Base" 0.1.1+16.10.20160610.2-0ubuntu1
  (c++)"unity::gmenuharness::MenuItemMatcher::has_exactly(unsigned int)@Base" 0.1+16.04.20151118
  (c++)"unity::gmenuharness::MenuItemMatcher::icon(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.1+16.04.20151118
  (c++)"unity::gmenuharness::MenuItemMatcher::int32_attribute(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int)@Base" 0.1+16.04.20151118
