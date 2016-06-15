@@ -1,8 +1,9 @@
-gmenuharness (0.1.1-0ubuntu1) UNRELEASED; urgency=medium
+gmenuharness (0.1.1+16.10.20160615-0ubuntu1) yakkety; urgency=medium
 
+  [ Antti Kaijanmäki ]
   * add MenuItemMatcher::enabled()
 
- -- Antti Kaijanmäki <antti.kaijanmaki@canonical.com>  Wed, 01 Jun 2016 13:41:50 +0300
+ -- Robert Bruce Park <robert.park@canonical.com>  Wed, 15 Jun 2016 13:45:57 +0000
 
 gmenuharness (0.1+16.04.20151119.3-0ubuntu1) xenial; urgency=medium
 
