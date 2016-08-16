@@ -19,6 +19,7 @@
 #include <unity/gmenuharness/MenuMatcher.h>
 #include <unity/gmenuharness/MatchUtils.h>
 
+#include <chrono>
 #include <iostream>
 
 #include <gio/gio.h>
@@ -159,11 +160,15 @@ MenuMatcher& MenuMatcher::item(const MenuItemMatcher& item)
     return *this;
 }
 
+static chrono::time_point<chrono::system_clock> oneSecondTimeout() {
+    return chrono::system_clock::now() + chrono::seconds(1);
+}
+
 void MenuMatcher::match(MatchResult& matchResult) const
 {
     vector<unsigned int> location;
 
-    int count = 0;
+    auto timeout = oneSecondTimeout();
 
     while (true)
     {
@@ -193,12 +198,13 @@ void MenuMatcher::match(MatchResult& matchResult) const
         }
         else
         {
-            // Start with a fresh menu to work around initialisation race condition in GMenu
-            if ((count % 50) == 0)
+            if (chrono::system_clock::now() >= timeout)
             {
+                // Start with a fresh menu to work around initialisation race condition in GMenu
                 p->createGmenu();
+
+                timeout = oneSecondTimeout();
             }
-            ++count;
 
             if (matchResult.hasTimedOut())
             {
