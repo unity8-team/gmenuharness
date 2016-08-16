@@ -19,6 +19,7 @@
 #include <unity/gmenuharness/MenuMatcher.h>
 #include <unity/gmenuharness/MatchUtils.h>
 
+#include <chrono>
 #include <iostream>
 
 #include <gio/gio.h>
@@ -110,6 +111,29 @@ struct MenuMatcher::Priv
     shared_ptr<GMenuModel>  m_menu;
 
     map<string, shared_ptr<GActionGroup>> m_actions;
+
+    void createGmenu()
+    {
+        m_menu.reset(
+                G_MENU_MODEL(
+                        g_dbus_menu_model_get(
+                                m_session.get(),
+                                m_parameters.p->m_busName.c_str(),
+                                m_parameters.p->m_menuObjectPath.c_str())),
+                &g_object_deleter);
+
+        for (const auto& action : m_parameters.p->m_actions)
+        {
+            shared_ptr<GActionGroup> actionGroup(
+                    G_ACTION_GROUP(
+                            g_dbus_action_group_get(
+                                    m_session.get(),
+                                    m_parameters.p->m_busName.c_str(),
+                                    action.second.c_str())),
+                    &g_object_deleter);
+            m_actions[action.first] = actionGroup;
+        }
+    }
 };
 
 MenuMatcher::MenuMatcher(const Parameters& parameters) :
@@ -123,25 +147,7 @@ MenuMatcher::MenuMatcher(const Parameters& parameters) :
                        &gdbus_connection_deleter);
     g_dbus_connection_set_exit_on_close(p->m_session.get(), false);
 
-    p->m_menu.reset(
-            G_MENU_MODEL(
-                    g_dbus_menu_model_get(
-                            p->m_session.get(),
-                            p->m_parameters.p->m_busName.c_str(),
-                            p->m_parameters.p->m_menuObjectPath.c_str())),
-            &g_object_deleter);
-
-    for (const auto& action : p->m_parameters.p->m_actions)
-    {
-        shared_ptr<GActionGroup> actionGroup(
-                G_ACTION_GROUP(
-                        g_dbus_action_group_get(
-                                p->m_session.get(),
-                                p->m_parameters.p->m_busName.c_str(),
-                                action.second.c_str())),
-                &g_object_deleter);
-        p->m_actions[action.first] = actionGroup;
-    }
+    p->createGmenu();
 }
 
 MenuMatcher::~MenuMatcher()
@@ -154,9 +160,15 @@ MenuMatcher& MenuMatcher::item(const MenuItemMatcher& item)
     return *this;
 }
 
+static chrono::time_point<chrono::system_clock> oneSecondTimeout() {
+    return chrono::system_clock::now() + chrono::seconds(1);
+}
+
 void MenuMatcher::match(MatchResult& matchResult) const
 {
     vector<unsigned int> location;
+
+    auto timeout = oneSecondTimeout();
 
     while (true)
     {
@@ -186,6 +198,14 @@ void MenuMatcher::match(MatchResult& matchResult) const
         }
         else
         {
+            if (chrono::system_clock::now() >= timeout)
+            {
+                // Start with a fresh menu to work around initialisation race condition in GMenu
+                p->createGmenu();
+
+                timeout = oneSecondTimeout();
+            }
+
             if (matchResult.hasTimedOut())
             {
                 matchResult.merge(childMatchResult);
