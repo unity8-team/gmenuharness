@@ -160,15 +160,15 @@ MenuMatcher& MenuMatcher::item(const MenuItemMatcher& item)
     return *this;
 }
 
-static chrono::time_point<chrono::system_clock> oneSecondTimeout() {
-    return chrono::system_clock::now() + chrono::seconds(1);
+static chrono::time_point<chrono::system_clock> topLevelTimeout() {
+    return chrono::system_clock::now() + chrono::seconds(10);
 }
 
 void MenuMatcher::match(MatchResult& matchResult) const
 {
     vector<unsigned int> location;
 
-    auto timeout = oneSecondTimeout();
+    auto timeout = topLevelTimeout();
 
     while (true)
     {
@@ -203,7 +203,7 @@ void MenuMatcher::match(MatchResult& matchResult) const
                 // Start with a fresh menu to work around initialisation race condition in GMenu
                 p->createGmenu();
 
-                timeout = oneSecondTimeout();
+                timeout = topLevelTimeout();
             }
 
             if (matchResult.hasTimedOut())
