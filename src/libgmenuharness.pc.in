@@ -16,9 +16,8 @@
 # Authored by: Xavi Garcia Mena <xavi.garcia.mena@canonical.com>
 #
 
-prefix=@CMAKE_INSTALL_PREFIX@
-includedir=${prefix}/@GMENU_HARNESS_HDR_INSTALL_BASE_DIR@
-libdir=${prefix}/@LIBDIR@
+includedir=@GMENU_HARNESS_HDR_INSTALL_BASE_DIR@
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
 
 Name: libgmenuharness
 Description: GMenu harness library
