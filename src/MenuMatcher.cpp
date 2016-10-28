@@ -37,10 +37,6 @@ namespace
 
 static void gdbus_connection_deleter(GDBusConnection* connection)
 {
-//    if (!g_dbus_connection_is_closed(connection))
-//    {
-//        g_dbus_connection_close_sync(connection, nullptr, nullptr);
-//    }
     g_clear_object(&connection);
 }
 }
@@ -114,6 +110,14 @@ struct MenuMatcher::Priv
 
     void createGmenu()
     {
+        m_system.reset(g_bus_get_sync(G_BUS_TYPE_SYSTEM, nullptr, nullptr),
+                          &gdbus_connection_deleter);
+        g_dbus_connection_set_exit_on_close(m_system.get(), false);
+
+        m_session.reset(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr),
+                           &gdbus_connection_deleter);
+        g_dbus_connection_set_exit_on_close(m_session.get(), false);
+
         m_menu.reset(
                 G_MENU_MODEL(
                         g_dbus_menu_model_get(
@@ -139,14 +143,6 @@ struct MenuMatcher::Priv
 MenuMatcher::MenuMatcher(const Parameters& parameters) :
         p(new Priv(parameters))
 {
-    p->m_system.reset(g_bus_get_sync(G_BUS_TYPE_SYSTEM, nullptr, nullptr),
-                      &gdbus_connection_deleter);
-    g_dbus_connection_set_exit_on_close(p->m_system.get(), false);
-
-    p->m_session.reset(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr),
-                       &gdbus_connection_deleter);
-    g_dbus_connection_set_exit_on_close(p->m_session.get(), false);
-
     p->createGmenu();
 }
 
@@ -161,7 +157,7 @@ MenuMatcher& MenuMatcher::item(const MenuItemMatcher& item)
 }
 
 static chrono::time_point<chrono::system_clock> topLevelTimeout() {
-    return chrono::system_clock::now() + chrono::seconds(10);
+    return chrono::system_clock::now() + chrono::seconds(20);
 }
 
 void MenuMatcher::match(MatchResult& matchResult) const
