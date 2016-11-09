@@ -6,6 +6,6 @@ DISTRO=$(lsb_release -c -s)
 SOURCE_SYMBOLS_FILE="${DIR}/libgmenuharness0.1.${DISTRO}.symbols"
 TARGET_SYMBOLS_FILE="${DIR}/libgmenuharness0.1.symbols"
 
-if [ ! -f "$TARGET_SYMBOLS_FILE" ]; then
+if [ -f "$SOURCE_SYMBOLS_FILE" ]; then
   cp "$SOURCE_SYMBOLS_FILE" "$TARGET_SYMBOLS_FILE"
 fi

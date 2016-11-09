@@ -95,7 +95,7 @@ struct MatchResult::Priv
 
     map<vector<unsigned int>, vector<string>, compare_vector> m_failures;
 
-    chrono::time_point<chrono::system_clock> m_timeout = chrono::system_clock::now() + chrono::seconds(10);
+    chrono::time_point<chrono::system_clock> m_timeout = chrono::system_clock::now() + chrono::seconds(40);
 };
 
 MatchResult::MatchResult() :

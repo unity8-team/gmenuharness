@@ -37,10 +37,6 @@ namespace
 
 static void gdbus_connection_deleter(GDBusConnection* connection)
 {
-//    if (!g_dbus_connection_is_closed(connection))
-//    {
-//        g_dbus_connection_close_sync(connection, nullptr, nullptr);
-//    }
     g_clear_object(&connection);
 }
 }
@@ -112,8 +108,57 @@ struct MenuMatcher::Priv
 
     map<string, shared_ptr<GActionGroup>> m_actions;
 
+    shared_ptr<GDBusConnection> createDBusConnection(GBusType type)
+	{
+		GError *error = nullptr;
+
+		gchar *address = g_dbus_address_get_for_bus_sync(type,
+				nullptr, &error);
+		if (!address)
+		{
+			g_assert(error != nullptr);
+			if (error->domain != G_IO_ERROR
+					|| error->code != G_IO_ERROR_CANCELLED)
+			{
+				std::cerr << "Error getting the bus address: "
+						<< error->message;
+			}
+			g_error_free(error);
+
+			throw runtime_error("Unable to get DBus connection address");
+		}
+
+		error = nullptr;
+
+		shared_ptr<GDBusConnection> bus(
+				g_dbus_connection_new_for_address_sync(address,
+						(GDBusConnectionFlags) (G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT
+								| G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION),
+						nullptr, nullptr, &error), &gdbus_connection_deleter);
+		g_free(address);
+
+		if (!bus)
+		{
+			g_assert(error != nullptr);
+			if (error->domain != G_IO_ERROR
+					|| error->code != G_IO_ERROR_CANCELLED)
+			{
+				std::cerr << "Error getting the bus: " << error->message;
+			}
+			g_error_free(error);
+			throw runtime_error("Unable to connect to DBus");
+		}
+
+		g_dbus_connection_set_exit_on_close(bus.get(), FALSE);
+
+		return bus;
+	}
+
     void createGmenu()
     {
+        m_system = createDBusConnection(G_BUS_TYPE_SYSTEM);
+        m_session = createDBusConnection(G_BUS_TYPE_SESSION);
+
         m_menu.reset(
                 G_MENU_MODEL(
                         g_dbus_menu_model_get(
@@ -139,14 +184,6 @@ struct MenuMatcher::Priv
 MenuMatcher::MenuMatcher(const Parameters& parameters) :
         p(new Priv(parameters))
 {
-    p->m_system.reset(g_bus_get_sync(G_BUS_TYPE_SYSTEM, nullptr, nullptr),
-                      &gdbus_connection_deleter);
-    g_dbus_connection_set_exit_on_close(p->m_system.get(), false);
-
-    p->m_session.reset(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr),
-                       &gdbus_connection_deleter);
-    g_dbus_connection_set_exit_on_close(p->m_session.get(), false);
-
     p->createGmenu();
 }
 
@@ -160,15 +197,15 @@ MenuMatcher& MenuMatcher::item(const MenuItemMatcher& item)
     return *this;
 }
 
-static chrono::time_point<chrono::system_clock> oneSecondTimeout() {
-    return chrono::system_clock::now() + chrono::seconds(1);
+static chrono::time_point<chrono::system_clock> topLevelTimeout() {
+    return chrono::system_clock::now() + chrono::seconds(20);
 }
 
 void MenuMatcher::match(MatchResult& matchResult) const
 {
     vector<unsigned int> location;
 
-    auto timeout = oneSecondTimeout();
+    auto timeout = topLevelTimeout();
 
     while (true)
     {
@@ -203,7 +240,7 @@ void MenuMatcher::match(MatchResult& matchResult) const
                 // Start with a fresh menu to work around initialisation race condition in GMenu
                 p->createGmenu();
 
-                timeout = oneSecondTimeout();
+                timeout = topLevelTimeout();
             }
 
             if (matchResult.hasTimedOut())
