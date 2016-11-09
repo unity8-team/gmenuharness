@@ -1,3 +1,11 @@
+gmenuharness (0.1.1+17.04.20161109.1-0ubuntu1) zesty; urgency=medium
+
+  * Improve test stability. Fix FTBFS on Zesty by reusing Xenial symbols
+    file for Zesty and Yakkety. Use GNUInstallDirs package correctly in
+    CMakeLists.txt for generating pkg-config files.
+
+ -- Pete Woods <pete.woods@canonical.com>  Wed, 09 Nov 2016 11:46:31 +0000
+
 gmenuharness (0.1.1+16.10.20160816.1-0ubuntu1) yakkety; urgency=medium
 
   * Work around initialisation race condition in GMenu
