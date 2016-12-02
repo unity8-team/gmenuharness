@@ -1017,7 +1017,7 @@ void MenuItemMatcher::match(
             }
             else
             {
-            	auto actionTarget = get_attribute(menuItem, G_MENU_ATTRIBUTE_TARGET);
+                auto actionTarget = get_attribute(menuItem, G_MENU_ATTRIBUTE_TARGET);
                 g_action_group_activate_action(tmpActionGroup.get(), tmpIdPair.second.c_str(), actionTarget.get());
             }
 
