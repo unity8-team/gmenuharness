@@ -1,3 +1,9 @@
+gmenuharness (0.1.2-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Fix action activation for radio buttons.
+
+ -- Pete <pete.woods@canonical.com>  Tue, 29 Nov 2016 12:09:32 +0000
+
 gmenuharness (0.1.1+17.04.20161109.1-0ubuntu1) zesty; urgency=medium
 
   * Improve test stability. Fix FTBFS on Zesty by reusing Xenial symbols
