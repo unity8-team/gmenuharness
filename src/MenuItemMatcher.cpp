@@ -1017,7 +1017,8 @@ void MenuItemMatcher::match(
             }
             else
             {
-                g_action_group_activate_action(tmpActionGroup.get(), tmpIdPair.second.c_str(), nullptr);
+                auto actionTarget = get_attribute(menuItem, G_MENU_ATTRIBUTE_TARGET);
+                g_action_group_activate_action(tmpActionGroup.get(), tmpIdPair.second.c_str(), actionTarget.get());
             }
 
             // FIXME this is a dodgy way to ensure the activation gets dispatched
